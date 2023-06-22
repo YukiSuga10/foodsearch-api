@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuksuga.foodsearchapi.repository.mybatis.FoodMapper">
+
+    <resultMap id="Food" type="com.yuksuga.foodsearchapi.domain.Food">
+        <id property="foodId" column="ID"/>
+        <result property="name" column="NAME"/>
+        <result property="recipe" column="RECIPE"/>
+        <result property="createUserId" column="CREATE_USER_ID"/>
+        <result property="createdAt" column="CREATED_AT"/>
+        <result property="updateUserId" column="UPDATE_USER_ID"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="lockVersion" column="LOCK_VERSION"/>
+        <result property="deleteFlag" column="DELETE_FLAG"/>
+    </resultMap>
+
+</mapper>

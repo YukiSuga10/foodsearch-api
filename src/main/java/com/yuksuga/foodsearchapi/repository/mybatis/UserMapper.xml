@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.yuksuga.foodsearchapi.repository.mybatis.UserMapper">
+
+    <resultMap id="User" type="com.yuksuga.foodsearchapi.domain.User">
+        <id property="userId" column="ID"/>
+        <result property="email" column="EMAIL"/>
+        <result property="password" column="PASSWORD"/>
+        <result property="firstName" column="FIRST_NAME"/>
+        <result property="lastName" column="LAST_NAME"/>
+        <result property="adminFlag" column="ADMIN_FLAG"/>
+        <result property="updateUserId" column="UPDATE_USER_ID"/>
+        <result property="updatedAt" column="UPDATED_AT"/>
+        <result property="lockVersion" column="LOCK_VERSION"/>
+        <result property="deleteFlag" column="DELETE_FLAG"/>
+    </resultMap>
+
+    <select id="find" resultMap="User">
+        SELECT
+        ID,
+        EMAIL,
+        PASSWORD,
+        FIRST_NAME,
+        LAST_NAME,
+        ADMIN_FLAG,
+        UPDATE_USER_ID,
+        UPDATED_AT,
+        LOCK_VERSION,
+        DELETE_FLAG
+        FROM
+        USER
+        <where>
+            DELETE_FLAG = 0
+            <if test="email != null">
+                AND EMAIL = #{email}
+            </if>
+        </where>
+        ORDER BY ID ASC
+    </select>
+
+    <select id="get" resultMap="User">
+        SELECT ID,
+        EMAIL,
+        PASSWORD,
+        FIRST_NAME,
+        LAST_NAME,
+        ADMIN_FLAG,
+        UPDATE_USER_ID,
+        UPDATED_AT,
+        LOCK_VERSION,
+        DELETE_FLAG
+        FROM USER
+        WHERE ID = #{userId}
+        AND DELETE_FLAG = 0
+    </select>
+
+    <insert id="add" parameterType="com.yuksuga.foodsearchapi.domain.User" useGeneratedKeys="true" keyProperty="userId">
+        <include refid="timestampVariable"/>
+        INSERT INTO USER
+        (
+        EMAIL,
+        PASSWORD,
+        FIRST_NAME,
+        LAST_NAME,
+        ADMIN_FLAG,
+        UPDATE_USER_ID,
+        UPDATED_AT,
+        DELETE_FLAG
+        )
+        VALUES
+        (
+        #{email},
+        #{password},
+        #{firstName},
+        #{lastName},
+        #{adminFlag},
+        0,
+        #{sysdate},
+        0
+        )
+    </insert>
+
+    <update id="set" parameterType="com.yuksuga.foodsearchapi.domain.User">
+        <include refid="timestampVariable"/>
+        UPDATE
+        USER
+        SET
+        EMAIL = #{email},
+        <if test="password != null">
+            PASSWORD = #{password},
+        </if>
+        FIRST_NAME = #{firstName},
+        LAST_NAME = #{lastName},
+        ADMIN_FLAG = #{adminFlag},
+        UPDATE_USER_ID = #{updateUserId},
+        UPDATED_AT = #{sysdate},
+        LOCK_VERSION = LOCK_VERSION + 1
+        WHERE
+        ID = #{userId}
+        AND LOCK_VERSION = #{lockVersion}
+        AND DELETE_FLAG = 0
+    </update>
+
+    <!-- sysdateをbindする共通Util -->
+    <sql id="timestampVariable">
+        <bind name="sysdate" value="@java.time.LocalDateTime@now()"/>
+    </sql>
+
+</mapper>
